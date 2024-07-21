@@ -1,0 +1,21 @@
+html {
+    font-size: x-large;
+}
+
+input {
+    height: 70px;
+}
+
+input::placeholder {
+    font-size: x-large;
+}
+
+.form-content {
+    padding: 24px 72px;
+}
+
+.logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}

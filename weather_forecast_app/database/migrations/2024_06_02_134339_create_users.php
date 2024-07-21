@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id')->unsigned(); // PK
-            $table->string('user_id', 255)->unique(); // UK
-            $table->integer('prefecture')->length(20)->nullable();
-            $table->integer('city')->length(20)->nullable();
-            $table->string('name', 255)->nullable();
-            $table->timestamps(0);
+        Schema::table('users', function (Blueprint $table) {
+            $table->bigIncrements('id')->unsigned(); // id
+            $table->string('user_id', 33)->unique(); // LineユーザーID
+            $table->string('password', 12);          // パスワード
+            $table->string('user_name', 50);         // ユーザー名
+            $table->int('birth', 8);                 // 生年月日
+            $table->string('otk', 12)->unique();     // ワンタイム認証キー
+            $table->timestamps('created_at', 0);     // 作成日時
+            $table->timestamps('updated_at', 0);     // 更新日時
+            $table->timestamps('deleted_at', 0);     // 削除日時
         });
     }
 
