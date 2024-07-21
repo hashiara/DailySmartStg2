@@ -12,8 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('id');
+            $table->dropColumn('user_id');
+            $table->dropColumn('mail');
+            $table->dropColumn('password');
+            $table->dropColumn('user_name');
+            $table->dropColumn('birth');
+            $table->dropColumn('otk');
+            $table->dropColumn('created_at');
+            $table->dropColumn('updated_at');
+            $table->dropColumn('deleted_at');
+
             $table->bigIncrements('id')->unsigned(); // id
             $table->string('user_id', 33)->unique(); // LineユーザーID
+            $table->string('mail', 255)->unique();   // メールアドレス
             $table->string('password', 12);          // パスワード
             $table->string('user_name', 50);         // ユーザー名
             $table->integer('birth', 8);             // 生年月日
