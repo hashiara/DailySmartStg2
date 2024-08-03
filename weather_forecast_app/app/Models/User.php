@@ -46,20 +46,22 @@ class User extends Authenticatable
                 ->where('created_at', '<', $tenMinutesAgo)
                 ->exists();
             if ($timeExpired) {
-                return ['error' => 'ワンタイム認証キーの有効期限が切れています。「地域を登録/更新」を押して再発行してください'];
-            }
-
-            $updateUser = $user->update([
-                'mail' => $request['mail'],
-                'user_name' => $request['user_name'],
-                'password' => Hash::make($request['password']),
-            ]);
-
-            if ($updateUser) {
-                return ['success' => 'ユーザー登録に成功しました'];
+                self::where('otk', $otk)->delete();
+                return ['error' => 'ワンタイム認証キーの有効期限が切れています。<br>「地域を登録/更新」を押して再発行してください'];
             }
 
             return ['error' => 'ユーザー登録に失敗しました'];
+        }
+
+        // ユーザー一致
+        $updateUser = $user->update([
+            'mail' => $request['mail'],
+            'user_name' => $request['user_name'],
+            'password' => Hash::make($request['password']),
+        ]);
+
+        if ($updateUser) {
+            return ['success' => 'ユーザー登録に成功しました'];
         }
     }
 

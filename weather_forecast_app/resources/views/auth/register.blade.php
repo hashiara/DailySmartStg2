@@ -26,6 +26,9 @@
         <label for="otk" class="form-label">ワンタイム認証キー</label><span class="text-danger fw-bold">*</span>
         <input type="text" id="otk" name="otk" placeholder="Lineに送信された12桁のキー" class="form-control" value="{{ old('otk') }}" />
         <div class="text-danger">{{ $errors->first('otk') }}</div>
+        @if (session('error')) 
+            <div class="text-danger">{!! session('error') !!}</div>
+        @endif
     </div>
 
     <div class="form-content">
