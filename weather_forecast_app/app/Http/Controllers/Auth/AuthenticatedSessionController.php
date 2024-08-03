@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Storage;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user();
+        return view('main.addData', compact('user'));
+    }
+
     /**
      * Display the login view.
      */

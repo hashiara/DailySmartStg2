@@ -27,7 +27,39 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'password' => ['required', 'present'],
+            'mail' => [
+                'required',
+                'max:255',
+                'email'
+                // 'unique:users,mail'
+            ],
+
+            'user_name' => [
+                'required',
+                'max:50'
+            ],
+
+            'otk' => [
+                'required'
+                // 'exists:users,otk'
+            ],
+
+            'password' => [
+                'required', 
+                'min:8',
+                'max:12',
+                'regex:/^[a-zA-Z0-9!\-\/\:\-\@\¥\[\-\`\{\-\~ａ-ｚＡ-Ｚ０-９！-／：-＠［-｀｛-～]+$/u'
+            ],
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'mail' => 'メールアドレス',
+            'user_name' => 'ユーザー名',
+            'otk' => 'ワンタイム認証キー',
+            'password' => 'パスワード'
         ];
     }
 
@@ -83,6 +115,7 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
+        dd(Str::lower($this->input('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->input('mail')).'|'.$this->ip());
     }
 }
