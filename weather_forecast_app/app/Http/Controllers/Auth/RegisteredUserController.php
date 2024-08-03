@@ -43,17 +43,7 @@ class RegisteredUserController extends Controller
         }
 
         return back()
-            ->withInput()
-            ->withErrors($result['error']);
-
-
-        // if ($registerdUser) {
-        //     session(['user' => $user]);
-        //     return redirect()->route('profile.edit');
-        // } else {
-        //     return back()
-        //         ->withInput()
-        //         ->withErrors(['message' => '正常に登録できませんでした。']);
-        // }
+            ->withInput($request->except('otk'))
+            ->with('error', $result['error']);
     }
 }

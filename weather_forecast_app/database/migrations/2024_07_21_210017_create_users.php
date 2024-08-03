@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();                                       // id
-            $table->string('user_id', 33)->unique();            // LineユーザーID
-            $table->string('mail', 255)->unique()->nullable();  // メールアドレス
-            $table->string('password', 12);                     // パスワード
-            $table->string('user_name', 50);                    // ユーザー名
-            $table->date('birth');                              // 生年月日
-            $table->string('otk', 12)->unique();                // ワンタイム認証キー
-            $table->timestamps();                               // 作成日時 更新日時
-            $table->softDeletes();                              // 削除日時
+            $table->id();                            // id
+            $table->string('user_id', 33)->unique(); // LineユーザーID
+            $table->string('mail', 255)->unique();   // メールアドレス
+            $table->string('password', 12);          // パスワード
+            $table->string('user_name', 50);         // ユーザー名
+            $table->date('birth');                   // 生年月日
+            $table->string('otk', 12)->unique();     // ワンタイム認証キー
+            $table->timestamps();                    // 作成日時 更新日時
+            $table->softDeletes();                   // 削除日時
         });
     }
 

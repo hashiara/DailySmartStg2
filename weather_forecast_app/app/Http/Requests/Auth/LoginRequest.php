@@ -30,8 +30,8 @@ class LoginRequest extends FormRequest
             'mail' => [
                 'required',
                 'max:255',
-                'email'
-                // 'unique:users,mail'
+                'email',
+                'unique:users,mail'
             ],
 
             'user_name' => [
@@ -40,8 +40,8 @@ class LoginRequest extends FormRequest
             ],
 
             'otk' => [
-                'required'
-                // 'exists:users,otk'
+                'required',
+                'exists:users,otk'
             ],
 
             'password' => [

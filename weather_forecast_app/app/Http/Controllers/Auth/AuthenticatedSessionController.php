@@ -18,7 +18,7 @@ class AuthenticatedSessionController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return view('main.addData', compact('user'));
+        return view('main.index', compact('user'));
     }
 
     /**

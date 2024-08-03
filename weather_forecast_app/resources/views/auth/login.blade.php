@@ -39,7 +39,6 @@
         </div>
         
         <a href="{{ route('register') }}" class="link-offset-2 link-underline link-underline-opacity-0 d-block mt-3">アカウントをお持ちでない方はこちら</a>
-        <a href="{{ route('addData') }}" class="link-offset-2 link-underline link-underline-opacity-0 d-block mt-3">アカウントをお持ちでない方はこちら</a>
     </div>
     
     
