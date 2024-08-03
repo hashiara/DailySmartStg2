@@ -12,6 +12,6 @@ class RegisterdUserService
 {
     public function registerUser(LoginRequest $request)
     {
-        User::registerUser($request['otk'], $request);
+        return User::registerUser($request['otk'], $request);
     }
 }
