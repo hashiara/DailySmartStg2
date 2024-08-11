@@ -4,7 +4,9 @@
 <link rel="stylesheet" href="{{ asset('/css/addData.css') }}">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="{{ asset('/js/hamburger.js') }}"></script>
+<script src="{{ asset('/js/formSubmit.js') }}"></script>
 @endsection
 
 <html>
@@ -26,38 +28,50 @@
                 data-toggle="collapse"
                 data-target=".hamburger-content"
                 aria-expanded="false"
-                aria-controls="hamburger1 hamburger2 hamburger3">
+                aria-controls="hamburger1 hamburger2 hamburger3 hamburger4">
                 <img id="hamburgerIcon" src="{{ asset('/images/hamburger.png') }}" />
                 <img id="hamburgerIcon2" src="{{ asset('/images/hamburger2.png') }}" hidden />
             </button>
             <div class="text-center bg-white">
                 <div class="collapse hamburger-content">
                     <h1 class="hamburger" id="hamburger1">
-                        <a href="#" class="">
+                        <a href="#">
                             星占い
                         </a>
                     </h1>
                 </div>
                 <div class="collapse hamburger-content">
                     <h1 class="hamburger" id="hamburger2">
-                        <a href="#" class="">
+                        <a href="#">
                             路線情報
                         </a>
                     </h1>
                 </div>
-                <div class="collapse hamburger-content">
+                <form id="logout_form" action="{{ route('logout') }}" method="POST" class="collapse hamburger-content">
+                    @csrf
                     <h1 class="hamburger" id="hamburger3">
-                        <a href="#" class="">
+                        <a href="">
                             ログアウト
                         </a>
                     </h1>
-                </div>
+                </form>
+                <form id="delete_account_form" action="{{ route('account.delete') }}" method="POST" class="collapse hamburger-content" data-toggle="modal" data-target="#deleteAcountModal">
+                    @csrf
+                    @method('DELETE')
+                    <h1 class="hamburger" id="hamburger4">
+                        <div>
+                            アカウント削除
+                        </div>
+                    </h1>
+                </form>
             </div>
         </header>
 
         <div class="container position-relative z-1">
-            <h2 class="text-light">ユーザー名さん</h2>
-            <form class="form-content" method="POST" action="{{ route('register.store') }}" >
+            <h2 class="text-light">{{ $user->user_name }}さん</h2>
+            <form class="form-content" method="POST" action="{{ route('addData.update') }}" >
+                @csrf
+                @method('patch')
                 <div class="form-content">
                     <label for="prefecture" class="form-label">都道府県</label>
                     <select id="prefecture" name="prefecture" class="form-select">
@@ -78,6 +92,23 @@
                     <button class="btn btn-info text-white" type="submit">登　録</button>
                 </div>
             </form>
+        </div>
+
+        <div class="modal fade" id="deleteAcountModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">アカウント削除</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label>アカウントが削除されますが本当によろしいですか？</label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                        <button id="delete_account_btn" type="button" class="btn btn-danger">削除</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

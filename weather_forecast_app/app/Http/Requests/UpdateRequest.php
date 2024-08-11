@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ProfileUpdateRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -16,8 +16,8 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'prefecture' => ['required', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:255'],
+            'prefecture' => ['integer', 'nullable'],
+            'city' => ['required_if:prefecture,!=,null', 'nullable'],
         ];
     }
 }

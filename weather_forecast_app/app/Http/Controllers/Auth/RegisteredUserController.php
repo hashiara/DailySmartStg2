@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\User;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\LoggingRequest;
 use App\Services\RegisterdUserService;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -16,17 +18,27 @@ use Illuminate\Support\Facades\Storage;
 
 class RegisteredUserController extends Controller
 {
-    public function login(): View
-    {
-        return view('auth.login');
-    }
-
     /**
-     * Display the registration view.
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function create(): View
+    // ユーザー登録
+    public function store(RegisterRequest $request, RegisterdUserService $service)
     {
-        return view('auth.register');
+        $result = $service->registerUser($request);
+
+        // 認証成功
+        if (isset($result['success'])) {
+            User::deleteOtk($result['user']);
+            Auth::login($result['user']);
+            return redirect()->route('main.index');
+        }
+
+        // 認証失敗
+        return back()
+            ->withInput($request->except('otk'))
+            ->with('error', $result['error']);
     }
 
     /**
@@ -34,16 +46,21 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(LoginRequest $request, RegisterdUserService $service)
+    // ログイン
+    public function login(LoggingRequest $request, RegisterdUserService $service)
     {
-        $result = $service->registerUser($request);
+        $credentials = $request->only('mail', 'user_name', 'password');
+        $result = $service->loginCheck($credentials);
 
-        if (isset($result['success'])) {
-            return redirect()->route('main.index');
+        // 認証成功
+        if ($result && Auth::attempt(['mail' => $result->mail, 'user_name' => $result->user_name, 'password' => $credentials['password']])) {
+            $request->session()->regenerate();
+            return redirect()->intended('addData');
         }
 
-        return back()
-            ->withInput($request->except('otk'))
-            ->with('error', $result['error']);
+        // 認証失敗
+        return back()->withErrors([
+            'failed' => 'メールアドレス、ユーザー名またはパスワードが違います',
+        ])->onlyInput('mail', 'user_name');
     }
 }

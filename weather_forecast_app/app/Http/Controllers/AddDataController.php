@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use App\Models\User;
 
-class ProfileController extends Controller
+class AddDataController extends Controller
 {
     /**
      * Display the user's profile form.
@@ -33,8 +33,13 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(UpdateRequest $request): RedirectResponse
     {
+        $user = Auth::user();
+        if ($user) {
+
+        }
+
         $user = session('user');
         $userModel = User::find($user->id);
 
@@ -63,29 +68,5 @@ class ProfileController extends Controller
         // $request->user()->save();
 
         // return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    // public function destroy(Request $request): RedirectResponse
-    public function destroy(Request $request)
-    {
-        $request->validateWithBag('userDeletion', [
-            'user_id' => ['required'],
-        ]);
-
-        // $user = $request->user();
-        $users = User::all();
-        $user = $users->where('user_id', $request->user_id)->first();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/' . $request->user_id);
     }
 }

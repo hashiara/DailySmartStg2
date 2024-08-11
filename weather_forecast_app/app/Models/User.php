@@ -9,10 +9,15 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     protected $table = 'users';
 
@@ -24,6 +29,7 @@ class User extends Authenticatable
     protected $fillable = [
         'mail',
         'user_name',
+        'otk',
         'password'
     ];
 
@@ -61,9 +67,26 @@ class User extends Authenticatable
         ]);
 
         if ($updateUser) {
-            return ['success' => 'ユーザー登録に成功しました'];
+            return [
+                'success' => 'ユーザー登録に成功しました',
+                'user' => $user
+            ];
         }
     }
+
+    public static function deleteOtk($user)
+    {
+        $user->update(['otk' => null]);
+    }
+
+    public static function loginCheck($credentials)
+    {
+        // mail または user_name のどちらかを使用してユーザーを検索
+        return User::where('mail', $credentials['mail'])
+                    ->orWhere('user_name', $credentials['user_name'])
+                    ->first() ?: false;
+    }
+    
 
     // /**
     //  * The attributes that should be hidden for serialization.
