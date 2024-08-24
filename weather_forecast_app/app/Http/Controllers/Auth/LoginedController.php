@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\User;
+use App\Models\Local;
+use App\Models\Train;
 use Illuminate\Support\Facades\Redirect;
 
 class LoginedController extends Controller
@@ -70,6 +72,8 @@ class LoginedController extends Controller
         if ($user) {
             Auth::logout();
             User::find($user->id)->forceDelete();
+            Local::where('user_id', $user->user_id)->forceDelete();
+            Train::where('user_id', $user->user_id)->forceDelete();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
