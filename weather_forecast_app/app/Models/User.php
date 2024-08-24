@@ -30,7 +30,8 @@ class User extends Authenticatable
         'mail',
         'user_name',
         'otk',
-        'password'
+        'password',
+        'birth'
     ];
 
     public static function registerUser($otk, $request)
@@ -52,7 +53,8 @@ class User extends Authenticatable
                 ->where('created_at', '<', $tenMinutesAgo)
                 ->exists();
             if ($timeExpired) {
-                self::where('otk', $otk)->delete();
+                // self::where('otk', $otk)->delete(); ソフトデリート
+                self::where('otk', $otk)->forceDelete();
                 return ['error' => 'ワンタイム認証キーの有効期限が切れています。<br>「地域を登録/更新」を押して再発行してください'];
             }
 
@@ -85,6 +87,19 @@ class User extends Authenticatable
         return User::where('mail', $credentials['mail'])
                     ->orWhere('user_name', $credentials['user_name'])
                     ->first() ?: false;
+    }
+
+    // 星占いデータ登録
+    public static function store($request, $user)
+    {
+        $userId = $user->user_id;
+        $data = $request->only(['birth']);
+
+        // テーブルに同じユーザーIDのレコードがあれば$requestのみ更新し、なければ$requestと$userIdを新規登録する
+        return self::upsert(
+            [array_merge($data, ['user_id' => $userId])],
+            ['user_id']
+        );
     }
     
 

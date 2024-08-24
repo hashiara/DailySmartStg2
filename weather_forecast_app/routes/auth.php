@@ -69,9 +69,6 @@ Route::middleware('auth')->group(function () {
 
     // Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    // Route::get('/addData', [LoginedController::class, 'index'])
-    //             ->name('main.index');
-
     Route::post('logout', [LoginedController::class, 'logout'])
                 ->name('logout');
     

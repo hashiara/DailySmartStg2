@@ -18,20 +18,23 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/addData/{title}', [LoginedController::class, 'index'])
+                ->name('main.index');
+                
 Route::get('/', function () {
     return view('auth/login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::get('/addData', [LoginedController::class, 'index'])
+    Route::get('/addData/{title}', [LoginedController::class, 'index'])
                 ->name('main.index');
                 
-    Route::patch('/addDataUpdate', [AddDataController::class, 'update'])
+    Route::patch('/addDataUpdate/{title}', [AddDataController::class, 'update'])
                 ->name('addData.update');
 });
 

@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
         if (isset($result['success'])) {
             User::deleteOtk($result['user']);
             Auth::login($result['user']);
-            return redirect()->route('main.index');
+            return redirect()->route('main.index', ['title' => 'weather']);
         }
 
         // 認証失敗
@@ -51,11 +51,13 @@ class RegisteredUserController extends Controller
     {
         $credentials = $request->only('mail', 'user_name', 'password');
         $result = $service->loginCheck($credentials);
+        // dd($credentials);
 
         // 認証成功
         if ($result && Auth::attempt(['mail' => $result->mail, 'user_name' => $result->user_name, 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('addData');
+            // return redirect()->intended('addData');
+            return redirect()->route('main.index', ['title' => 'weather']);
         }
 
         // 認証失敗

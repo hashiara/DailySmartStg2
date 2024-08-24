@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use App\Models\User;
+use App\Services\AddDataService;
 
 class AddDataController extends Controller
 {
@@ -33,40 +34,23 @@ class AddDataController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(UpdateRequest $request): RedirectResponse
+    public function update(UpdateRequest $request, $title, AddDataService $service): RedirectResponse
     {
+        // ログインが失効していたらログイン画面に遷移
         $user = Auth::user();
-        if ($user) {
-
+        if (!$user) {
+            return redirect()->route('login.page');
         }
 
-        $user = session('user');
-        $userModel = User::find($user->id);
-
-        if ($userModel && $request) {
-            // ユーザー情報の更新
-            $userModel->fill($request->validated());
-            $userModel->save();
-    
-            // 必要に応じてセッション情報を更新
-            session(['user' => $userModel]);
-    
-            return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // データ登録の結果に応じてメッセージとともに元の画面に遷移
+        if ($service->update($request, $title, $user)) {
+            return back()
+                ->withInput()
+                ->with('success', config('const.'.$title) . 'の登録が成功しました。');
         } else {
             return back()
                 ->withInput()
-                ->withErrors(['message' => 'セッションがタイムアウトしました。もう一度LineメッセージのURLからアクセスし直してください。']);
+                ->withErrors(['message' => config('const.'.$title) . 'の登録が失敗しました。']);
         }
-
-
-        // $request->user()->fill($request->validated());
-
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
-
-        // $request->user()->save();
-
-        // return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 }
