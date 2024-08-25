@@ -9,10 +9,15 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     protected $table = 'users';
 
@@ -24,7 +29,9 @@ class User extends Authenticatable
     protected $fillable = [
         'mail',
         'user_name',
-        'password'
+        'otk',
+        'password',
+        'birth'
     ];
 
     public static function registerUser($otk, $request)
@@ -46,7 +53,8 @@ class User extends Authenticatable
                 ->where('created_at', '<', $tenMinutesAgo)
                 ->exists();
             if ($timeExpired) {
-                self::where('otk', $otk)->delete();
+                // self::where('otk', $otk)->delete(); ソフトデリート
+                self::where('otk', $otk)->forceDelete();
                 return ['error' => 'ワンタイム認証キーの有効期限が切れています。<br>「地域を登録/更新」を押して再発行してください'];
             }
 
@@ -61,9 +69,39 @@ class User extends Authenticatable
         ]);
 
         if ($updateUser) {
-            return ['success' => 'ユーザー登録に成功しました'];
+            return [
+                'success' => 'ユーザー登録に成功しました',
+                'user' => $user
+            ];
         }
     }
+
+    public static function deleteOtk($user)
+    {
+        $user->update(['otk' => null]);
+    }
+
+    public static function loginCheck($credentials)
+    {
+        // mail または user_name のどちらかを使用してユーザーを検索
+        return User::where('mail', $credentials['mail'])
+                    ->orWhere('user_name', $credentials['user_name'])
+                    ->first() ?: false;
+    }
+
+    // 星占いデータ登録
+    public static function store($request, $user)
+    {
+        $userId = $user->user_id;
+        $data = $request->only(['birth']);
+
+        // テーブルに同じユーザーIDのレコードがあれば$requestのみ更新し、なければ$requestと$userIdを新規登録する
+        return self::upsert(
+            [array_merge($data, ['user_id' => $userId])],
+            ['user_id']
+        );
+    }
+    
 
     // /**
     //  * The attributes that should be hidden for serialization.

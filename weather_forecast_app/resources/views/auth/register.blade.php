@@ -42,11 +42,7 @@
 
     <div class="text-center my-3">
         <button class="btn btn-info text-white" type="submit">登　録</button>
-        <a href="{{ route('login') }}" class="link-offset-2 link-underline link-underline-opacity-0 d-block mt-3">アカウントをお持ちの方はこちら</a>
+        <a href="{{ route('login.page') }}" class="link-offset-2 link-underline link-underline-opacity-0 d-block mt-3">アカウントをお持ちの方はこちら</a>
     </div>
-    
-    
-    <error :messages="$errors->get('name')" class="mt-2" />
-
 </form>
 @endsection
